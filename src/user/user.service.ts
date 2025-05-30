@@ -34,12 +34,22 @@ export class UserService {
     return this.hidePassword(user);
   }
 
+  validatePassword(id: string, password: string) {
+    const user = this.dbService.users.find((user) => user.id === id);
+    if (!user) return null;
+    if (user.password !== password) return null;
+    return user;
+  }
+
   update(id: string, updateUserDto: UpdateUserDto) {
     const user = this.dbService.users.find((user) => user.id === id);
     if (!user) return null;
     const newUser = Object.assign({}, user, updateUserDto);
     newUser.updatedAt = new Date().getTime();
     newUser.version += 1;
+    const userIndex = this.dbService.users.findIndex((user) => user.id === id);
+    if (userIndex === -1) return null;
+    this.dbService.users[userIndex] = newUser;
     return this.hidePassword(newUser);
   }
 

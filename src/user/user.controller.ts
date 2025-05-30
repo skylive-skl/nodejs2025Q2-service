@@ -3,15 +3,16 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   NotFoundException,
+  Put,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UUIDValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
+import { UpdatePasswordDto } from './dto/update-passsword.dto';
 
 @Controller('user')
 export class UserController {
@@ -36,12 +37,21 @@ export class UserController {
     return res;
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id', UUIDValidationPipe) id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    const res = this.userService.update(id, updateUserDto);
+    const user = this.userService.validatePassword(
+      id,
+      updatePasswordDto.oldPassword,
+    );
+    if (!user) {
+      throw new ForbiddenException('Old password is incorrect');
+    }
+    const res = this.userService.update(id, {
+      password: updatePasswordDto.newPassword,
+    });
     if (!res) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
