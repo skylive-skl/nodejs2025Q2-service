@@ -11,6 +11,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UUIDValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
 
 @Controller('user')
 export class UserController {
@@ -27,7 +28,7 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', UUIDValidationPipe) id: string) {
     const res = this.userService.findOne(id);
     if (!res) {
       throw new NotFoundException(`User with id ${id} not found`);
@@ -36,7 +37,10 @@ export class UserController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id', UUIDValidationPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     const res = this.userService.update(id, updateUserDto);
     if (!res) {
       throw new NotFoundException(`User with id ${id} not found`);
@@ -45,7 +49,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', UUIDValidationPipe) id: string) {
     const res = this.userService.remove(id);
     if (!res) {
       throw new NotFoundException(`User with id ${id} not found`);
