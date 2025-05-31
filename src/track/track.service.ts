@@ -17,6 +17,10 @@ export class TrackService {
     return this.dbService.tracks;
   }
 
+  findByIds(ids: string[]) {
+    return this.dbService.tracks.filter((track) => ids.includes(track.id));
+  }
+
   findOne(id: string) {
     return this.dbService.tracks.find((track) => track.id === id);
   }

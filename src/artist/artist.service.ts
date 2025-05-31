@@ -18,6 +18,10 @@ export class ArtistService {
     return this.dbService.artists;
   }
 
+  findByIds(ids: string[]) {
+    return this.dbService.artists.filter((artist) => ids.includes(artist.id));
+  }
+
   findOne(id: string) {
     return this.dbService.artists.find((artist) => artist.id === id);
   }

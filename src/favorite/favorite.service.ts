@@ -1,16 +1,33 @@
 import { Injectable } from '@nestjs/common';
+import { AlbumService } from 'src/album/album.service';
+import { ArtistService } from 'src/artist/artist.service';
 import { DbService } from 'src/db/db.service';
+import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class FavoriteService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(
+    private readonly dbService: DbService,
+    private readonly trackService: TrackService,
+    private readonly albumService: AlbumService,
+    private readonly artistService: ArtistService,
+  ) {}
 
   getAll() {
     return {
-      tracks: Array.from(this.dbService.favorites.tracks.values()),
-      albums: Array.from(this.dbService.favorites.albums.values()),
-      artists: Array.from(this.dbService.favorites.artists.values()),
+      tracks: this.getAllTracksByIds(this.dbService.favorites.tracks),
+      albums: this.getAllAlbumsByIds(this.dbService.favorites.albums),
+      artists: this.getAllArtistsByIds(this.dbService.favorites.artists),
     };
+  }
+  getAllTracksByIds(trackIds: Set<string>) {
+    return this.trackService.findByIds(Array.from(trackIds));
+  }
+  getAllAlbumsByIds(albumIds: Set<string>) {
+    return this.albumService.findByIds(Array.from(albumIds));
+  }
+  getAllArtistsByIds(artistIds: Set<string>) {
+    return this.artistService.findByIds(Array.from(artistIds));
   }
 
   addTrackToFavorites(trackId: string) {

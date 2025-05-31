@@ -22,6 +22,10 @@ export class AlbumService {
     return this.dbService.albums;
   }
 
+  findByIds(ids: string[]) {
+    return this.dbService.albums.filter((album) => ids.includes(album.id));
+  }
+
   findOne(id: string) {
     return this.dbService.albums.find((album) => album.id === id);
   }
