@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DbService } from 'src/db/db.service';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(private readonly dbService: DbService) { }
 
   create(createUserDto: CreateUserDto) {
     const user = {
-      id: uuidv4(),
+      id: randomUUID(),
       ...createUserDto,
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),

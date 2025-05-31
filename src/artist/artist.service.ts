@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { DbService } from 'src/db/db.service';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 
 @Injectable()
 export class ArtistService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(private readonly dbService: DbService) { }
 
   create(createArtistDto: CreateArtistDto) {
-    const artist = { id: uuidv4(), ...createArtistDto };
+    const artist = { id: randomUUID(), ...createArtistDto };
     this.dbService.artists.push(artist);
     return artist;
   }

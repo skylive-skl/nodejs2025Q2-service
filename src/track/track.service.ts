@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { DbService } from 'src/db/db.service';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import { FavoriteService } from 'src/favorite/favorite.service';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class TrackService {
     private readonly favoriteService: FavoriteService,
   ) {}
   create(createTrackDto: CreateTrackDto) {
-    const track = { id: uuidv4(), ...createTrackDto };
+    const track = { id: randomUUID(), ...createTrackDto };
     this.dbService.tracks.push(track);
     return track;
   }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { DbService } from 'src/db/db.service';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 
 @Injectable()
 export class AlbumService {
@@ -10,7 +10,7 @@ export class AlbumService {
 
   create(createAlbumDto: CreateAlbumDto) {
     const newAlbum = {
-      id: uuidv4(),
+      id: randomUUID(),
       artistId: createAlbumDto.artistId || null,
       ...createAlbumDto,
     };
