@@ -36,7 +36,7 @@ export class FavoriteController {
       throw new UnprocessableEntityException(`Track with ID ${id} not found`);
     }
     this.favoriteService.addTrackToFavorites(id);
-    return id;
+    return track;
   }
 
   @Delete('track/:id')
@@ -57,7 +57,7 @@ export class FavoriteController {
       throw new UnprocessableEntityException(`Album with ID ${id} not found`);
     }
     this.favoriteService.addAlbumToFavorites(id);
-    return id;
+    return album;
   }
 
   @Delete('album/:id')
@@ -78,7 +78,7 @@ export class FavoriteController {
       throw new UnprocessableEntityException(`Artist with ID ${id} not found`);
     }
     this.favoriteService.addArtistToFavorites(id);
-    return id;
+    return artist;
   }
 
   @Delete('artist/:id')

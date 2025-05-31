@@ -44,20 +44,20 @@ export class ArtistController {
     @Param('id', UUIDValidationPipe) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    const artist = this.artistService.findOne(id);
+    const artist = this.artistService.update(id, updateArtistDto);
     if (!artist) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
     }
-    return this.artistService.update(id, updateArtistDto);
+    return artist;
   }
 
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
   remove(@Param('id', UUIDValidationPipe) id: string) {
-    const artist = this.artistService.findOne(id);
+    const artist = this.artistService.remove(id);
     if (!artist) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
     }
-    return this.artistService.remove(id);
+    return artist;
   }
 }
