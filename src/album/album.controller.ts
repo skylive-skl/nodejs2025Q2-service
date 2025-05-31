@@ -15,12 +15,14 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import { UUIDValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
 import { StatusCodes } from 'http-status-codes';
 import { TrackService } from 'src/track/track.service';
+import { FavoriteService } from 'src/favorite/favorite.service';
 
 @Controller('album')
 export class AlbumController {
   constructor(
     private readonly albumService: AlbumService,
     private readonly trackService: TrackService,
+    private readonly favoriteService: FavoriteService,
   ) {}
 
   @Post()
@@ -64,6 +66,7 @@ export class AlbumController {
     }
 
     this.trackService.removeAlbumIdFromTracks(id);
+    this.favoriteService.removeAlbumFromFavorites(id);
     return;
   }
 }

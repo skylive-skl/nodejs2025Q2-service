@@ -1,12 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { DbService } from 'src/db/db.service';
 import { v4 as uuidv4 } from 'uuid';
+import { FavoriteService } from 'src/favorite/favorite.service';
 
 @Injectable()
 export class TrackService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(
+    private readonly dbService: DbService,
+    @Inject(forwardRef(() => FavoriteService))
+    private readonly favoriteService: FavoriteService,
+  ) {}
   create(createTrackDto: CreateTrackDto) {
     const track = { id: uuidv4(), ...createTrackDto };
     this.dbService.tracks.push(track);
@@ -45,6 +50,8 @@ export class TrackService {
     if (trackIndex === -1) return null;
 
     this.dbService.tracks.splice(trackIndex, 1);
+
+    this.favoriteService.removeTrackFromFavorites(id);
     return { id };
   }
 

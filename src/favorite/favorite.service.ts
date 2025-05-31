@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AlbumService } from 'src/album/album.service';
 import { ArtistService } from 'src/artist/artist.service';
 import { DbService } from 'src/db/db.service';
@@ -8,6 +8,7 @@ import { TrackService } from 'src/track/track.service';
 export class FavoriteService {
   constructor(
     private readonly dbService: DbService,
+    @Inject(forwardRef(() => TrackService))
     private readonly trackService: TrackService,
     private readonly albumService: AlbumService,
     private readonly artistService: ArtistService,
