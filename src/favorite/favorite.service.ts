@@ -14,10 +14,6 @@ export class FavoriteService {
   }
 
   addTrackToFavorites(trackId: string) {
-    const trackIndex = this.dbService.tracks.findIndex(
-      (track) => track.id === trackId,
-    );
-    if (trackIndex === -1) return false;
     return this.dbService.favorites.tracks.add(trackId);
   }
 
@@ -26,10 +22,6 @@ export class FavoriteService {
   }
 
   addAlbumToFavorites(albumId: string) {
-    const albumIndex = this.dbService.albums.findIndex(
-      (album) => album.id === albumId,
-    );
-    if (albumIndex === -1) return false;
     return this.dbService.favorites.albums.add(albumId);
   }
 
@@ -38,10 +30,6 @@ export class FavoriteService {
   }
 
   addArtistToFavorites(artistId: string) {
-    const artistIndex = this.dbService.artists.findIndex(
-      (artist) => artist.id === artistId,
-    );
-    if (artistIndex === -1) return false;
     return this.dbService.favorites.artists.add(artistId);
   }
 
