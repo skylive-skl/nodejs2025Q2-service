@@ -3,21 +3,25 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   HttpCode,
   NotFoundException,
+  Put,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { UUIDValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
 import { StatusCodes } from 'http-status-codes';
+import { TrackService } from 'src/track/track.service';
 
 @Controller('album')
 export class AlbumController {
-  constructor(private readonly albumService: AlbumService) {}
+  constructor(
+    private readonly albumService: AlbumService,
+    private readonly trackService: TrackService,
+  ) {}
 
   @Post()
   @HttpCode(StatusCodes.CREATED)
@@ -39,7 +43,7 @@ export class AlbumController {
     return album;
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id', UUIDValidationPipe) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
@@ -58,6 +62,8 @@ export class AlbumController {
     if (!removed) {
       throw new NotFoundException(`Album with ID ${id} not found`);
     }
+
+    this.trackService.removeAlbumIdFromTracks(id);
     return;
   }
 }
