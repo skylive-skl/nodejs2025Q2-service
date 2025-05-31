@@ -8,17 +8,20 @@ import {
   NotFoundException,
   Put,
   ForbiddenException,
+  HttpCode,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UUIDValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
 import { UpdatePasswordDto } from './dto/update-passsword.dto';
+import { StatusCodes } from 'http-status-codes';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @HttpCode(StatusCodes.CREATED)
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
@@ -59,6 +62,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @HttpCode(StatusCodes.NO_CONTENT)
   remove(@Param('id', UUIDValidationPipe) id: string) {
     const res = this.userService.remove(id);
     if (!res) {
