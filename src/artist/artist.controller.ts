@@ -14,10 +14,16 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { UUIDValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
 import { StatusCodes } from 'http-status-codes';
+import { AlbumService } from 'src/album/album.service';
+import { TrackService } from 'src/track/track.service';
 
 @Controller('artist')
 export class ArtistController {
-  constructor(private readonly artistService: ArtistService) {}
+  constructor(
+    private readonly artistService: ArtistService,
+    private readonly albumService: AlbumService,
+    private readonly trackService: TrackService,
+  ) {}
 
   @Post()
   @HttpCode(StatusCodes.CREATED)
@@ -58,6 +64,9 @@ export class ArtistController {
     if (!artist) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
     }
+    this.albumService.removeArtistIdFromAlbums(id);
+    this.trackService.removeArtistIdFromTracks(id);
+
     return artist;
   }
 }

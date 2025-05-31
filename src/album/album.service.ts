@@ -47,4 +47,12 @@ export class AlbumService {
     this.dbService.albums.splice(albumIndex, 1);
     return { id };
   }
+
+  removeArtistIdFromAlbums(artistId: string) {
+    this.dbService.albums.forEach((album) => {
+      if (album.artistId === artistId) {
+        album.artistId = null;
+      }
+    });
+  }
 }
