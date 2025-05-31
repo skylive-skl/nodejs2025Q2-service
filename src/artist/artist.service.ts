@@ -6,7 +6,7 @@ import { randomUUID } from 'node:crypto';
 
 @Injectable()
 export class ArtistService {
-  constructor(private readonly dbService: DbService) { }
+  constructor(private readonly dbService: DbService) {}
 
   create(createArtistDto: CreateArtistDto) {
     const artist = { id: randomUUID(), ...createArtistDto };
