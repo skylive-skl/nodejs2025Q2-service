@@ -37,8 +37,8 @@ export class UserService {
   validatePassword(id: string, password: string) {
     const user = this.dbService.users.find((user) => user.id === id);
     if (!user) return null;
-    if (user.password !== password) return null;
-    return user;
+    if (user.password !== password) return false;
+    return true;
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {

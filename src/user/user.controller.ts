@@ -45,19 +45,21 @@ export class UserController {
     @Param('id', UUIDValidationPipe) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    const user = this.userService.validatePassword(
-      id,
+    const user = this.userService.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    const isPasswordValid = this.userService.validatePassword(
+      user.id,
       updatePasswordDto.oldPassword,
     );
-    if (!user) {
+    if (!isPasswordValid) {
       throw new ForbiddenException('Old password is incorrect');
     }
+
     const res = this.userService.update(id, {
       password: updatePasswordDto.newPassword,
     });
-    if (!res) {
-      throw new NotFoundException(`User with id ${id} not found`);
-    }
     return res;
   }
 
