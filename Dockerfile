@@ -10,7 +10,8 @@ COPY . /app/
 
 
 FROM core AS development
-CMD ["npm", "run", "start:dev"]
+# RUN npm run prisma:migrate:dev
+CMD npm run prisma:migrate:prod && npm run start:dev
 
 FROM core AS production
 RUN npm run build

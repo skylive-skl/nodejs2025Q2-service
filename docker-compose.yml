@@ -1,29 +1,4 @@
-version: '3.8'
-
 services:
-  node:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: development
-    restart: unless-stopped
-    develop:
-      watch:
-        - action: sync
-          path: ./src
-          target: /app/src
-    
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-    env_file:
-      - .env
-    ports:
-      - ${PORT}:${PORT}
-    networks:
-      - webnet
-  
   postgres:
     image: postgres:latest
     restart: always
@@ -43,6 +18,28 @@ services:
       timeout: 5s
       retries: 5
     
+  node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - webnet
+  
+
 
 networks:
   webnet:
