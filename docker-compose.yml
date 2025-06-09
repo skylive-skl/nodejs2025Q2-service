@@ -11,6 +11,10 @@ services:
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
       POSTGRES_DB: "${DB_NAME}"
       POSTGRES_HOST_AUTH_METHOD: "trust"
+    volumes:
+      - ./volumes/db:/var/lib/postgresql/data
+      - ./volumes/db_logs:/var/lib/postgresql/logs
+    command: postgres -c logging_collector=on -c log_directory=/var/lib/postgresql/logs -c log_statement=all
     working_dir: /app
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}" ]
