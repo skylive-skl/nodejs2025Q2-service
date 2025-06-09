@@ -1,51 +1,51 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { DbService } from 'src/db/db.service';
-import { randomUUID } from 'node:crypto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ArtistService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(createArtistDto: CreateArtistDto) {
-    const artist = { id: randomUUID(), ...createArtistDto };
-    this.dbService.artists.push(artist);
+  async create(createArtistDto: CreateArtistDto) {
+    const artist = await this.prisma.artist.create({ data: createArtistDto });
     return artist;
   }
 
-  findAll() {
-    return this.dbService.artists;
+  async findAll() {
+    return await this.prisma.artist.findMany();
   }
 
-  findByIds(ids: string[]) {
-    return this.dbService.artists.filter((artist) => ids.includes(artist.id));
+  async findByIds(ids: string[]) {
+    return await this.prisma.artist.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
   }
 
-  findOne(id: string) {
-    return this.dbService.artists.find((artist) => artist.id === id);
+  async findOne(id: string) {
+    return await this.prisma.artist.findUnique({ where: { id } });
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    const artistIndex = this.dbService.artists.findIndex(
-      (artist) => artist.id === id,
-    );
-    if (artistIndex === -1) return null;
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    const artist = await this.prisma.artist.findUnique({ where: { id } });
+    if (!artist) return null;
 
-    this.dbService.artists[artistIndex] = {
-      ...this.dbService.artists[artistIndex],
-      ...updateArtistDto,
-    };
-    return this.dbService.artists[artistIndex];
+    const updatedArtist = await this.prisma.artist.update({
+      where: { id },
+      data: { ...artist, ...updateArtistDto },
+    });
+    return updatedArtist;
   }
 
-  remove(id: string) {
-    const artistIndex = this.dbService.artists.findIndex(
-      (artist) => artist.id === id,
-    );
-    if (artistIndex === -1) return null;
+  async remove(id: string) {
+    const artist = await this.prisma.artist.findUnique({ where: { id } });
+    if (!artist) return null;
 
-    this.dbService.artists.splice(artistIndex, 1);
+    await this.prisma.artist.delete({ where: { id } });
     return { id };
   }
 }

@@ -29,18 +29,18 @@ export class ArtistController {
 
   @Post()
   @HttpCode(StatusCodes.CREATED)
-  create(@Body() createArtistDto: CreateArtistDto) {
+  async create(@Body() createArtistDto: CreateArtistDto) {
     return this.artistService.create(createArtistDto);
   }
 
   @Get()
-  findAll() {
-    return this.artistService.findAll();
+  async findAll() {
+    return await this.artistService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', UUIDValidationPipe) id: string) {
-    const artist = this.artistService.findOne(id);
+  async findOne(@Param('id', UUIDValidationPipe) id: string) {
+    const artist = await this.artistService.findOne(id);
     if (!artist) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
     }
@@ -48,11 +48,11 @@ export class ArtistController {
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', UUIDValidationPipe) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    const artist = this.artistService.update(id, updateArtistDto);
+    const artist = await this.artistService.update(id, updateArtistDto);
     if (!artist) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
     }
@@ -61,14 +61,14 @@ export class ArtistController {
 
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
-  remove(@Param('id', UUIDValidationPipe) id: string) {
-    const artist = this.artistService.remove(id);
+  async remove(@Param('id', UUIDValidationPipe) id: string) {
+    const artist = await this.artistService.remove(id);
     if (!artist) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
     }
-    this.albumService.removeArtistIdFromAlbums(id);
-    this.trackService.removeArtistIdFromTracks(id);
-    this.favoriteService.removeArtistFromFavorites(id);
+    await this.albumService.removeArtistIdFromAlbums(id);
+    await this.trackService.removeArtistIdFromTracks(id);
+    await this.favoriteService.removeArtistFromFavorites(id);
     return artist;
   }
 }

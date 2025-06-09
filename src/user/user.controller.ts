@@ -23,8 +23,8 @@ export class UserController {
 
   @Post()
   @HttpCode(StatusCodes.CREATED)
-  create(@Body() createUserDto: CreateUserDto) {
-    const user = this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const user = await this.userService.create(createUserDto);
     return new UserResponseDto(user);
   }
 
@@ -70,6 +70,7 @@ export class UserController {
   @HttpCode(StatusCodes.NO_CONTENT)
   async remove(@Param('id', UUIDValidationPipe) id: string) {
     const res = await this.userService.remove(id);
+    console.log('removed user', res);
     if (!res) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
