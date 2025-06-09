@@ -15,6 +15,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UUIDValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
 import { UpdatePasswordDto } from './dto/update-passsword.dto';
 import { StatusCodes } from 'http-status-codes';
+import { UserResponseDto } from './dto/response-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -23,33 +24,35 @@ export class UserController {
   @Post()
   @HttpCode(StatusCodes.CREATED)
   create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    const user = this.userService.create(createUserDto);
+    return new UserResponseDto(user);
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    const users = await this.userService.findAll();
+    return users.map((user) => new UserResponseDto(user));
   }
 
   @Get(':id')
-  findOne(@Param('id', UUIDValidationPipe) id: string) {
-    const res = this.userService.findOne(id);
+  async findOne(@Param('id', UUIDValidationPipe) id: string) {
+    const res = await this.userService.findOne(id);
     if (!res) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
-    return res;
+    return new UserResponseDto(res);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', UUIDValidationPipe) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    const user = this.userService.findOne(id);
+    const user = await this.userService.findOne(id);
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
-    const isPasswordValid = this.userService.validatePassword(
+    const isPasswordValid = await this.userService.validatePassword(
       user.id,
       updatePasswordDto.oldPassword,
     );
@@ -57,19 +60,19 @@ export class UserController {
       throw new ForbiddenException('Old password is incorrect');
     }
 
-    const res = this.userService.update(id, {
+    const res = await this.userService.update(id, {
       password: updatePasswordDto.newPassword,
     });
-    return res;
+    return new UserResponseDto(res);
   }
 
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
-  remove(@Param('id', UUIDValidationPipe) id: string) {
-    const res = this.userService.remove(id);
+  async remove(@Param('id', UUIDValidationPipe) id: string) {
+    const res = await this.userService.remove(id);
     if (!res) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
-    return res;
+    return new UserResponseDto(res);
   }
 }

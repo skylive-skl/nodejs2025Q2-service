@@ -8,10 +8,13 @@ RUN npm install
 
 COPY . /app/
 
+RUN npm run prisma:generate
+
 
 FROM core AS development
 # RUN npm run prisma:migrate:dev
-CMD npm run prisma:migrate:prod && npm run start:dev
+# RUN npm run prisma:generate
+CMD npm run start:dev:migrate
 
 FROM core AS production
 RUN npm run build
