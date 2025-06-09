@@ -43,6 +43,7 @@ export class FavoriteController {
   @HttpCode(StatusCodes.NO_CONTENT)
   async removeTrack(@Param('id', UUIDValidationPipe) id: string) {
     const track = await this.trackService.findOne(id);
+    console.log('Track to remove:', track);
     if (!track) {
       throw new NotFoundException(`Track with ID ${id} not found`);
     }

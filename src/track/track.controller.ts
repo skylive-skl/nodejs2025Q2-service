@@ -14,14 +14,10 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { StatusCodes } from 'http-status-codes';
 import { UUIDValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
-import { FavoriteService } from 'src/favorite/favorite.service';
 
 @Controller('track')
 export class TrackController {
-  constructor(
-    private readonly trackService: TrackService,
-    private readonly favoriteService: FavoriteService,
-  ) {}
+  constructor(private readonly trackService: TrackService) {}
 
   @Post()
   @HttpCode(StatusCodes.CREATED)
@@ -64,7 +60,6 @@ export class TrackController {
     if (!removed) {
       throw new NotFoundException(`Track with ID ${id} not found`);
     }
-    await this.favoriteService.removeTrackFromFavorites(id);
     return removed;
   }
 }

@@ -38,9 +38,15 @@ export class UserService {
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) return null;
-    const newUser = Object.assign({}, user, updateUserDto);
-    newUser.version += 1;
-    this.prisma.user.update({ where: { id }, data: newUser });
+    const newUser = await this.prisma.user.update({
+      where: { id },
+      data: {
+        ...updateUserDto,
+        version: user.version + 1,
+        updatedAt: new Date().toISOString(),
+      },
+    });
+
     return this.hidePassword(newUser);
   }
 

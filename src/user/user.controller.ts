@@ -56,6 +56,7 @@ export class UserController {
       user.id,
       updatePasswordDto.oldPassword,
     );
+    console.log('isPasswordValid', isPasswordValid);
     if (!isPasswordValid) {
       throw new ForbiddenException('Old password is incorrect');
     }
