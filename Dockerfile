@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:22-alpine AS core
 
 WORKDIR /app
 
@@ -8,6 +8,10 @@ RUN npm install
 
 COPY . /app/
 
-RUN npm run build
 
+FROM core AS development
+CMD ["npm", "run", "start:dev"]
+
+FROM core AS production
+RUN npm run build
 CMD ["npm", "run", "start:prod"]
