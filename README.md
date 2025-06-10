@@ -49,6 +49,14 @@ To run the application in development mode with hot-reloading, use the following
 ```bash
 npm run start:dev
 ```
+You need a database for that
+
+
+## Running application in container in development mode
+To run the application in a Docker container in development mode with hot-reloading, use the following command:
+```bash
+npm run docker:dev
+```
 
 ## Testing
 
@@ -96,6 +104,18 @@ npm run lint
 ```bash
 npm run format
 ```
+
+### Security scan 
+
+To run a security scan on the project, you can use the following command:
+```bash
+npm run scan
+```
+To automatically fix any issues found during the security scan, you can use the following command:
+```bash
+npm run scan:fix
+```
+
 
 ### Debugging in VSCode
 

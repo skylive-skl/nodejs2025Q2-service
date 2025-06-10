@@ -1,62 +1,59 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { DbService } from 'src/db/db.service';
-import { randomUUID } from 'node:crypto';
+// import { DbService } from 'src/db/db.service';
 import { User } from './entities/user.entity';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(private prisma: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
-    const user = {
-      id: randomUUID(),
-      ...createUserDto,
-      createdAt: new Date().getTime(),
-      updatedAt: new Date().getTime(),
-      version: 1,
-    };
-
-    this.dbService.users.push(user);
-    return this.hidePassword(user);
+  async create(createUserDto: CreateUserDto) {
+    const newUser = await this.prisma.user.create({ data: createUserDto });
+    return this.hidePassword(newUser);
   }
 
-  findAll() {
-    return this.dbService.users.map((user) => {
+  async findAll() {
+    const users = await this.prisma.user.findMany();
+    if (!users) return [];
+    return users.map((user) => {
       return this.hidePassword(user);
     });
   }
 
-  findOne(id: string) {
-    const user = this.dbService.users.find((user) => user.id === id);
+  async findOne(id: string) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) return null;
     return this.hidePassword(user);
   }
 
-  validatePassword(id: string, password: string) {
-    const user = this.dbService.users.find((user) => user.id === id);
+  async validatePassword(id: string, password: string) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) return null;
     if (user.password !== password) return false;
     return true;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    const user = this.dbService.users.find((user) => user.id === id);
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) return null;
-    const newUser = Object.assign({}, user, updateUserDto);
-    newUser.updatedAt = new Date().getTime();
-    newUser.version += 1;
-    const userIndex = this.dbService.users.findIndex((user) => user.id === id);
-    if (userIndex === -1) return null;
-    this.dbService.users[userIndex] = newUser;
+    const newUser = await this.prisma.user.update({
+      where: { id },
+      data: {
+        ...updateUserDto,
+        version: user.version + 1,
+        updatedAt: new Date().toISOString(),
+      },
+    });
+
     return this.hidePassword(newUser);
   }
 
-  remove(id: string) {
-    const userIndex = this.dbService.users.findIndex((user) => user.id === id);
-    if (userIndex === -1) return null;
-    this.dbService.users.splice(userIndex, 1);
+  async remove(id: string) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) return null;
+    await this.prisma.user.delete({ where: { id } });
     return { id };
   }
 

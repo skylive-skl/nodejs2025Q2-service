@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    networks:
+      - webnet
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    environment:
+      POSTGRES_USER: "${DB_USERNAME}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    volumes:
+      - ./volumes/db:/var/lib/postgresql/data
+      - ./volumes/db_logs:/var/lib/postgresql/logs
+    command: postgres -c logging_collector=on -c log_directory=/var/lib/postgresql/logs -c log_statement=all
+    working_dir: /app
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    
+  node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - webnet
+  
+
+
+networks:
+  webnet:
+    driver: bridge

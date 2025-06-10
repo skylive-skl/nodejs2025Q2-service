@@ -30,19 +30,20 @@ export class FavoriteController {
 
   @Post('track/:id')
   @HttpCode(StatusCodes.CREATED)
-  addTrack(@Param('id', UUIDValidationPipe) id: string) {
-    const track = this.trackService.findOne(id);
+  async addTrack(@Param('id', UUIDValidationPipe) id: string) {
+    const track = await this.trackService.findOne(id);
     if (!track) {
       throw new UnprocessableEntityException(`Track with ID ${id} not found`);
     }
-    this.favoriteService.addTrackToFavorites(id);
+    await this.favoriteService.addTrackToFavorites(id);
     return track;
   }
 
   @Delete('track/:id')
   @HttpCode(StatusCodes.NO_CONTENT)
-  removeTrack(@Param('id', UUIDValidationPipe) id: string) {
-    const track = this.trackService.findOne(id);
+  async removeTrack(@Param('id', UUIDValidationPipe) id: string) {
+    const track = await this.trackService.findOne(id);
+    console.log('Track to remove:', track);
     if (!track) {
       throw new NotFoundException(`Track with ID ${id} not found`);
     }
@@ -51,19 +52,19 @@ export class FavoriteController {
 
   @Post('album/:id')
   @HttpCode(StatusCodes.CREATED)
-  addAlbum(@Param('id', UUIDValidationPipe) id: string) {
-    const album = this.albumService.findOne(id);
+  async addAlbum(@Param('id', UUIDValidationPipe) id: string) {
+    const album = await this.albumService.findOne(id);
     if (!album) {
       throw new UnprocessableEntityException(`Album with ID ${id} not found`);
     }
-    this.favoriteService.addAlbumToFavorites(id);
+    await this.favoriteService.addAlbumToFavorites(id);
     return album;
   }
 
   @Delete('album/:id')
   @HttpCode(StatusCodes.NO_CONTENT)
-  removeAlbum(@Param('id', UUIDValidationPipe) id: string) {
-    const album = this.albumService.findOne(id);
+  async removeAlbum(@Param('id', UUIDValidationPipe) id: string) {
+    const album = await this.albumService.findOne(id);
     if (!album) {
       throw new NotFoundException(`Album with ID ${id} not found`);
     }
@@ -72,19 +73,19 @@ export class FavoriteController {
 
   @Post('artist/:id')
   @HttpCode(StatusCodes.CREATED)
-  addArtist(@Param('id', UUIDValidationPipe) id: string) {
-    const artist = this.artistService.findOne(id);
+  async addArtist(@Param('id', UUIDValidationPipe) id: string) {
+    const artist = await this.artistService.findOne(id);
     if (!artist) {
       throw new UnprocessableEntityException(`Artist with ID ${id} not found`);
     }
-    this.favoriteService.addArtistToFavorites(id);
+    await this.favoriteService.addArtistToFavorites(id);
     return artist;
   }
 
   @Delete('artist/:id')
   @HttpCode(StatusCodes.NO_CONTENT)
-  removeArtist(@Param('id', UUIDValidationPipe) id: string) {
-    const artist = this.artistService.findOne(id);
+  async removeArtist(@Param('id', UUIDValidationPipe) id: string) {
+    const artist = await this.artistService.findOne(id);
     if (!artist) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
     }
