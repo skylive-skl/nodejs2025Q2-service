@@ -43,7 +43,7 @@ export class UserService {
       data: {
         ...updateUserDto,
         version: user.version + 1,
-        updatedAt: new Date().toISOString(),
+        updatedAt: new Date(),
       },
     });
 

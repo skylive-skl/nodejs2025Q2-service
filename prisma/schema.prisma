@@ -19,8 +19,8 @@ model User {
   login          String           
   password       String
   version        Int              @default(1)
-  createdAt      DateTime         @default(now()) @db.Timestamp(0)
-  updatedAt      DateTime         @updatedAt @db.Timestamp(0)
+  createdAt      DateTime         @default(now()) @db.Timestamp(3)
+  updatedAt      DateTime         @updatedAt @db.Timestamp(3)
   FavoriteArtist FavoriteArtist[]
   FavoriteAlbum  FavoriteAlbum[]
   FavoriteTrack  FavoriteTrack[]
