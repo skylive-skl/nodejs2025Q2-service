@@ -41,7 +41,7 @@ export class AuthController {
       throw new ForbiddenException('Invalid refresh token');
     }
     const user = this.authService.getUserFromToken(data.refreshToken);
-    return this.authService.generateToken(user);
+    return await this.authService.generateToken(user);
   }
   @UseGuards(JwtAuthGuard)
   @Post('me')

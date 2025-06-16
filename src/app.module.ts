@@ -9,6 +9,10 @@ import { TrackModule } from './track/track.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
+import { LoggingService } from './common/logging/logging.service';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 @Module({
   imports: [
@@ -22,6 +26,18 @@ import { AuthModule } from './auth/auth.module';
     FavoriteModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    LoggingService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+
+    AppService,
+  ],
 })
 export class AppModule {}
