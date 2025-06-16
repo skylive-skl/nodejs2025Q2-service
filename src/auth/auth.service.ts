@@ -15,7 +15,7 @@ export class AuthService {
     private userService: UserService,
     private hashService: HashService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
   async validateUserCredentials(
     login: string,
     password: string,
@@ -37,17 +37,17 @@ export class AuthService {
       login: user.login,
       version: user.version,
     };
-    const access_token = await this.jwtService.signAsync(userData, {
+    const accessToken = await this.jwtService.signAsync(userData, {
       expiresIn: '1h',
       secret: process.env.JWT_SECRET_KEY,
     });
-    const refresh_token = await this.jwtService.signAsync(userData, {
+    const refreshToken = await this.jwtService.signAsync(userData, {
       expiresIn: '1d',
       secret: process.env.JWT_SECRET_REFRESH_KEY,
     });
     return {
-      access_token,
-      refresh_token,
+      accessToken,
+      refreshToken,
       data: userData,
     };
   }

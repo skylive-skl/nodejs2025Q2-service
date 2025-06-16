@@ -8,14 +8,17 @@ import {
   Put,
   HttpCode,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { UUIDValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
 import { StatusCodes } from 'http-status-codes';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @Controller('artist')
+@UseGuards(JwtAuthGuard)
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
