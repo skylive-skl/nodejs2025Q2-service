@@ -6,3 +6,5 @@ export class User {
   createdAt: Date; // timestamp of creation
   updatedAt: Date; // timestamp of last update
 }
+
+export interface ClientUser extends Omit<User, 'password'> {}
