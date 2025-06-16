@@ -19,7 +19,7 @@ export class AuthService {
   async validateUserCredentials(
     login: string,
     password: string,
-  ): Promise<User | Error> {
+  ): Promise<User> {
     const user = await this.userService.getUserByLogin(login);
     if (!user) throw new ForbiddenException();
     const valid = await this.hashService.comparePassword(
@@ -33,7 +33,7 @@ export class AuthService {
   }
   async generateToken(user: ReqData['user']) {
     const userData: ReqData['user'] = {
-      id: user.id,
+      userId: user.userId,
       login: user.login,
       version: user.version,
     };
@@ -66,7 +66,7 @@ export class AuthService {
         secret: process.env.JWT_SECRET_REFRESH_KEY,
       });
     } catch (error) {
-      throw new BadRequestException('Invalid token');
+      throw new ForbiddenException('Invalid token');
     }
   }
   getUserFromToken(token: string) {

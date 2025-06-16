@@ -5,8 +5,9 @@ import {
   Post,
   Request,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
-import { Body } from '@nestjs/common/decorators';
+import { Body, UsePipes } from '@nestjs/common/decorators';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
@@ -20,7 +21,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private userService: UserService,
-  ) {}
+  ) { }
   @HttpCode(200)
   @Post('signup')
   async signUp(@Body() data: LoginDto) {
@@ -35,7 +36,12 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('refresh')
-  async refresh(@Body() data: RefreshDto) {
+  @UsePipes(
+    new ValidationPipe({
+      errorHttpStatusCode: 401,
+    }),
+  )
+  async refresh(@Body() data: { refreshToken: string }) {
     const isValid = this.authService.validateRefreshToken(data.refreshToken);
     if (!isValid) {
       throw new ForbiddenException('Invalid refresh token');

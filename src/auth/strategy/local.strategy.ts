@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { AuthService } from '../auth.service';
 
-import { User } from 'generated/prisma';
+import { ReqData } from '../auth.type';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -13,12 +13,16 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(login: string, password: string): Promise<User | Error> {
+  async validate(login: string, password: string): Promise<ReqData['user']> {
     const user = await this.authService.validateUserCredentials(
       login,
       password,
     );
     if (!user) throw new ForbiddenException();
-    return user;
+    return {
+      userId: user.id,
+      login: user.login,
+      version: user.version,
+    };
   }
 }
