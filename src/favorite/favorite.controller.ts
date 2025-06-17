@@ -7,6 +7,7 @@ import {
   HttpCode,
   UnprocessableEntityException,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { FavoriteService } from './favorite.service';
 import { UUIDValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
@@ -14,8 +15,10 @@ import { StatusCodes } from 'http-status-codes';
 import { TrackService } from 'src/track/track.service';
 import { AlbumService } from 'src/album/album.service';
 import { ArtistService } from 'src/artist/artist.service';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @Controller('favs')
+@UseGuards(JwtAuthGuard)
 export class FavoriteController {
   constructor(
     private readonly favoriteService: FavoriteService,

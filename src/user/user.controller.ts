@@ -9,6 +9,7 @@ import {
   Put,
   ForbiddenException,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,8 +17,10 @@ import { UUIDValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
 import { UpdatePasswordDto } from './dto/update-passsword.dto';
 import { StatusCodes } from 'http-status-codes';
 import { UserResponseDto } from './dto/response-user.dto';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @Controller('user')
+@UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
